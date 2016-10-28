@@ -9,6 +9,9 @@
 import pylab as plt
 import plotly.plotly as py
 import sys
+import os
+from os import listdir
+from os.path import isfile, join
 
 def calculate_time_diff(prev_time, cur_time):
 
@@ -39,46 +42,58 @@ def calculate_time_diff(prev_time, cur_time):
 		diff = (60 + m_diff)
 	else:
 		diff = (h_diff*60 + m_diff)
-	if diff > 500:
-		print time1
-		print time2
-		print diff
-		print h_diff
-		print m_diff
 	return diff
 
 
 fig = plt.figure()
+threshold = 200
+count = [0 for i in range(threshold+1)]
+mypath = 'data/week/'
+files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-# Open the file entered as a commandline argument
-fo = open(sys.argv[1], "rw+")
+if '.DS_Store' in files: files.remove('.DS_Store')
 
-mins_between = [] # vector for all time diffs
+# Open each file and run to develop a histogram
+for f in files:
+	name, extension = os.path.splitext(f)
+	print name
+	print extension
+	fo = open(mypath+f, "rw+")
 
-prev_entry = fo.readline() # first active time to init things
-first_vals = prev_entry.split("\t")
-prev_time = first_vals[0]
+	mins_between = [] # vector for all time diffs
 
-# read in all data and record time differences between activation
-entry = fo.readline()
-max_diff = -1
-while (entry != ""):
-	values = entry.split("\t")
-	cur_time = values[0]
-	cur_status = int(values[1])
+	prev_entry = fo.readline() # first active time to init things
+	first_vals = prev_entry.split("\t")
+	prev_time = first_vals[0]
 
-	if (cur_status == 1):
-		time_diff = calculate_time_diff(prev_time, cur_time)
-		if (time_diff > max_diff):
-			max_diff = time_diff
-		mins_between.append(time_diff)
-		prev_time = cur_time
-
+	# read in all data and record time differences between activation
 	entry = fo.readline()
+	max_diff = -1
+
+	while (entry != ""):
+		values = entry.split("\t")
+		cur_time = values[0]
+		cur_status = int(values[1])
+
+		if (cur_time == prev_time):
+			entry = fo.readline()
+			continue
+
+		if (cur_status == 1):
+			time_diff = calculate_time_diff(prev_time, cur_time)
+			if (time_diff > max_diff):
+				max_diff = time_diff
+			if (time_diff <= threshold):
+				mins_between.append(time_diff)
+				count[time_diff] = count[time_diff] + 1
+			prev_time = cur_time
+
+		entry = fo.readline()
 	
-print mins_between
-n, bins, patches = plt.hist(mins_between)
-plt.show() 
+	n, bins, patches = plt.hist(mins_between, bins=range(min(mins_between), max(mins_between)+1,1))
+	save_name = name +'.png'
+	plt.savefig(save_name)
+	plt.show() 
 
 
 
