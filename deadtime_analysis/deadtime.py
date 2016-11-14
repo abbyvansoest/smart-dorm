@@ -11,6 +11,7 @@ import sys
 import os
 from os import listdir
 from os.path import isfile, join
+from operator import add
 
 def calculate_time_diff(prev_time, cur_time):
 
@@ -45,13 +46,15 @@ def calculate_time_diff(prev_time, cur_time):
 
 
 fig = plt.figure()
-threshold = 200
+threshold = 150
 count = [0 for i in range(threshold+1)]
 mypath = 'data/before_school/'
 dest_dir = 'histograms/before_school/'
 files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
 if '.DS_Store' in files: files.remove('.DS_Store')
+
+cumulative = [0] * threshold
 
 # Open each file and run to develop a histogram
 for f in files:
@@ -87,11 +90,26 @@ for f in files:
 			prev_time = cur_time
 
 		entry = fo.readline()
-	
-	n, bins, patches = plt.hist(mins_between, bins=range(min(mins_between), max(mins_between)+1,1))
-	save_name = dest_dir + name +'.png'
+
+	n, bins, patches = plt.hist(mins_between, bins=range(0, threshold+1,1), normed=True)
+	save_name = dest_dir + name + '_2' + '.png'
+	plt.title(name + ' Sensor, Dead Time Frequency')
+	plt.xlabel('Time Since Last Activation')
+	plt.ylabel('Frequency')
 	plt.savefig(save_name)
-	plt.show() 
+	#plt.show()
+
+	cumulative = map(add, cumulative, n)
+	print cumulative
+
+
+n, bins, patches = plt.hist(cumulative, bins=range(0, threshold+1,1), normed=True)
+plt.title('Dead Time Frequency Over All Sensors: Before School') 
+plt.xlabel('Time Since Last Activation')
+plt.ylabel('Frequency')
+save_name = 'global_before_school' +'.png'
+plt.savefig(save_name)
+plt.show() 
 
 
 
