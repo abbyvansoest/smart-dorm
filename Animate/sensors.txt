@@ -1,0 +1,41 @@
+# FIRST FLOOR
+	# OS_bloom-hall131 
+		(220, 198)
+	# OS_bloom-hall132  
+		(276, 124)
+	# OS_corr122 
+		(250,400)
+	# OS_Corr130A 
+		(218, 260)
+	# OS_Corr132
+		(290, 184)
+	# OS_Hall121
+		(150, 350)
+
+# SECOND FLOOR
+	# OS_Corr257
+		(204, 343)
+	# OS_Corr260
+		(204, 224)
+	# OS_Corr264
+		(295, 354)
+	# OS_Corr266
+		(390, 364)
+	# OS_Corr272
+		(608, 400)
+	# OS_Rm253
+		(85, 390)
+
+# THIRD FLOOR
+	# OS_Corr356
+		(200, 140)
+	# OS_Corr357
+		(224, 360)
+	# OS_Corr360
+		(240, 240)
+	# OS_Corr364
+		(330, 380)
+	# OS_Corr366
+		(436, 395)
+	# OS_Rm353
+		(116, 416)
