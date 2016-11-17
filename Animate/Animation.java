@@ -117,7 +117,7 @@ public class Animation {
 
 			String day = args[0];
 			String floor = args[1];
-			String filename = "animate_data/txt/global_"+day+"_"+floor+".txt";
+			String filename = "animate_data/global_"+day+"_"+floor+".txt";
 			System.out.println(filename);
 
 			String floorplan = "";
