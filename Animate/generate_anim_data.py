@@ -79,6 +79,12 @@ def get_name(index):
         return 'sunday/second/'
     if (index == 18):
         return 'sunday/third/'
+    if (index == 19):
+    	return 'monday/first/'
+    if (index == 20):
+    	return 'monday/second/'
+    if (index == 21):
+    	return 'monday/third/'
 
     return 'NOPE/'
 
@@ -95,7 +101,7 @@ def time_to_index(time):
 	return index
 
 tracker = 1
-while (tracker <= 18):
+while (tracker <= 21):
 	dir_name = get_name(tracker)
 	splice = dir_name.split('/')
 	day = splice[0]
@@ -138,15 +144,23 @@ while (tracker <= 18):
 		global_array.append(list(fo_array))
 		i = i + 1
 
-	tup = []
-	for i in range(len(global_array)):
-		add = (names[i], global_array[i])
-		tup.append(add)
+	# tup = []
+	# for i in range(len(global_array)):
+	# 	add = (names[i], global_array[i])
+	# 	tup.append(add)
 
-	my_dict = dict(tup)
-	df = DataFrame(my_dict)
-	excel = 'global_' +day+'_'+floor+'.xlsx'
-	df.to_excel(excel, sheet_name='sheet1', index=False)
+	# my_dict = dict(tup)
+	# df = DataFrame(my_dict)
+	data_name = 'global_' +day+'_'+floor+'.txt'
+	# df.to_excel(data_name, sheet_name='sheet1', index=False)
+	file_out = open(data_name, 'w')
+	for x in range(0,1439):
+		for y in range(len(global_array)):
+			cur_list = global_array[y]
+			file_out.write(str(cur_list[x])+'\t')
+		file_out.write('\n')
+
+	file_out.close()
 
 	tracker = tracker + 1
 
