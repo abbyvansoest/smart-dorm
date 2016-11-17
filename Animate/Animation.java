@@ -3,11 +3,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import java.util.Arrays;
 import javax.imageio.ImageIO;
 import java.awt.image.*;
-
-//import java.awt.image;
 
 public class Animation {
 
@@ -176,13 +173,12 @@ public class Animation {
 		    		StdDraw.filledCircle(x,y,r);
 		    		
 		    		if (active_array[i].equals("1")) {
-		    			System.out.println("x: "+x+"  y: "+y);
 		    			StdDraw.setPenColor(StdDraw.RED);
 		    			StdDraw.filledCircle(x, y, r);
 		    			StdDraw.setPenColor(StdDraw.BLACK);
 		    		}
 		    	}
-		    	
+
 		    	String prev_time = get_time(tracker-1);
 		    	StdDraw.setPenColor(StdDraw.WHITE);
 		    	StdDraw.text(.8,.8,prev_time);
@@ -193,8 +189,6 @@ public class Animation {
 
 		    	StdDraw.show();
 		    	StdDraw.pause(100);
-		    	//StdDraw.clear();
-		    	//StdDraw.picture(0.5, 0.5, floorplan);
 		    	tracker++;
 		    }
 
