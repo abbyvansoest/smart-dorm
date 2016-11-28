@@ -13,8 +13,10 @@ class Experiment1
 
 private:
 	string datafile;
-	int renewal;
+	int contract_length;
 	bool active;
+
+	string getTime(int);
 
 public:
 
