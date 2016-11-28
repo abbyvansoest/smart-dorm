@@ -5,7 +5,7 @@ int RENEW = 1
 Experiment1::Experiment1() : Experiment1(0, "nope") {}
 
 //  constructor 
-Experiment1::Experiment1(int renew, string data) {
+Experiment1::Experiment1(string data, int renew) {
 
 	if (data == "nope") {
 		printf ("Provide a file");

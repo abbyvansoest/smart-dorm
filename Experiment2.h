@@ -13,7 +13,7 @@ class Experiment2
 
 private:
 	string datafile;
-	int* history
+	int* history;
 	int hist_length;
 	int renewal;
 	bool active;
