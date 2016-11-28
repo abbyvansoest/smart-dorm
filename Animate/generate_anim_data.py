@@ -106,6 +106,8 @@ while (tracker <= 21):
 	splice = dir_name.split('/')
 	day = splice[0]
 	floor = splice[1]
+	print day
+	print floor
 	# get all files for desired day and floor
 	mypath = 'pre_data/'+dir_name
 
@@ -143,7 +145,7 @@ while (tracker <= 21):
 		# add sensor data to full data matrix
 		global_array.append(list(fo_array))
 		i = i + 1
-
+	print names
 	# tup = []
 	# for i in range(len(global_array)):
 	# 	add = (names[i], global_array[i])
@@ -151,16 +153,16 @@ while (tracker <= 21):
 
 	# my_dict = dict(tup)
 	# df = DataFrame(my_dict)
-	data_name = 'global_' +day+'_'+floor+'.txt'
-	# df.to_excel(data_name, sheet_name='sheet1', index=False)
-	file_out = open(data_name, 'w')
-	for x in range(0,1439):
-		for y in range(len(global_array)):
-			cur_list = global_array[y]
-			file_out.write(str(cur_list[x])+'\t')
-		file_out.write('\n')
+	# data_name = 'global_' +day+'_'+floor+'.txt'
+	# # df.to_excel(data_name, sheet_name='sheet1', index=False)
+	# file_out = open(data_name, 'w')
+	# for x in range(0,1439):
+	# 	for y in range(len(global_array)):
+	# 		cur_list = global_array[y]
+	# 		file_out.write(str(cur_list[x])+'\t')
+	# 	file_out.write('\n')
 
-	file_out.close()
+	# file_out.close()
 
 	tracker = tracker + 1
 
