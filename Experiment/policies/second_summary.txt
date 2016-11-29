@@ -1,0 +1,20 @@
+5
+number contracts renewed in middle: 11325
+number contracts created from nothing: 2360
+number contracts expired: 2357
+10
+number contracts renewed in middle: 12579
+number contracts created from nothing: 1106
+number contracts expired: 1100
+15
+number contracts renewed in middle: 13042
+number contracts created from nothing: 643
+number contracts expired: 637
+20
+number contracts renewed in middle: 13283
+number contracts created from nothing: 402
+number contracts expired: 396
+30
+number contracts renewed in middle: 13503
+number contracts created from nothing: 182
+number contracts expired: 176
