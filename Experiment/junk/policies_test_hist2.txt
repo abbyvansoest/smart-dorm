@@ -1,0 +1,71 @@
+CATEGORY CHANGE: -1 to 1
+['0', '0', '0', '0', '0', '1', '0', '0', '1', '1']
+00:10	1	1	1	TURN ON
+CATEGORY CHANGE: -1 to 4
+['1', '1', '0', '0', '0', '0', '1', '1', '0', '0']
+00:10	0	0	5	LEAVE OFF
+00:11	0	0	2	LET EXPIRE
+00:11	0	0	5	LEAVE OFF
+00:12	0	0	3	LEAVE OFF
+00:12	0	0	5	LEAVE OFF
+00:13	1	4	4	TURN ON
+CATEGORY CHANGE: 4 to 2
+['0', '0', '0', '1', '1', '0', '0', '0', '0', '0']
+00:13	0	0	4	LEAVE OFF
+CATEGORY CHANGE: 1 to 4
+['0', '1', '0', '0', '1', '1', '1', '0', '0', '1']
+00:14	1	5	5	CONTRACT RENEWED
+00:14	0	0	3	LEAVE OFF
+00:15	0	4	5	WAIT LIFESPAN
+00:15	0	0	2	LEAVE OFF
+00:16	1	5	5	CONTRACT RENEWED
+00:16	1	1	1	TURN ON
+00:17	1	5	5	CONTRACT RENEWED
+CATEGORY CHANGE: 2 to 4
+['1', '0', '0', '0', '0', '0', '0', '0', '0', '1']
+00:17	1	5	5	CONTRACT RENEWED
+00:18	0	4	5	WAIT LIFESPAN
+CATEGORY CHANGE: 4 to 1
+['0', '0', '0', '0', '0', '0', '0', '0', '1', '1']
+00:18	1	6	6	CONTRACT RENEWED
+00:19	0	3	5	WAIT LIFESPAN
+00:19	1	7	7	CONTRACT RENEWED
+00:20	0	2	5	WAIT LIFESPAN
+00:20	1	8	8	CONTRACT RENEWED
+00:21	1	5	5	CONTRACT RENEWED
+00:21	1	9	9	CONTRACT RENEWED
+00:22	0	4	5	WAIT LIFESPAN
+00:22	0	8	10	WAIT LIFESPAN
+CATEGORY CHANGE: 4 to 2
+['1', '1', '0', '1', '1', '0', '0', '0', '1', '0']
+00:23	0	3	4	WAIT LIFESPAN
+00:23	1	11	11	CONTRACT RENEWED
+00:24	1	3	3	CONTRACT RENEWED
+CATEGORY CHANGE: 1 to 4
+['0', '0', '1', '1', '1', '1', '1', '1', '0', '1']
+00:24	0	10	5	WAIT LIFESPAN
+CATEGORY CHANGE: 2 to 4
+['0', '1', '1', '0', '0', '0', '1', '0', '0', '1']
+00:25	1	5	5	CONTRACT RENEWED
+00:25	0	9	5	WAIT LIFESPAN
+00:26	1	5	5	CONTRACT RENEWED
+CATEGORY CHANGE: 4 to 2
+['1', '1', '1', '1', '1', '1', '0', '1', '0', '0']
+00:26	0	8	4	WAIT LIFESPAN
+00:27	0	4	5	WAIT LIFESPAN
+00:27	0	7	3	WAIT LIFESPAN
+CATEGORY CHANGE: 4 to 1
+['0', '0', '0', '1', '0', '0', '1', '1', '1', '0']
+00:28	0	3	6	WAIT LIFESPAN
+00:28	0	6	2	WAIT LIFESPAN
+00:29	0	2	7	WAIT LIFESPAN
+00:29	1	1	1	CONTRACT RENEWED
+CATEGORY CHANGE: 1 to 4
+['0', '1', '0', '0', '1', '1', '1', '0', '0', '0']
+00:30	0	1	5	WAIT LIFESPAN
+00:30	0	0	0	LET EXPIRE
+number contracts renewed in middle: 14
+number contracts created from nothing: 3
+number contracts expired: 2
+number contracts left off: 7
+number of category changes made: 12

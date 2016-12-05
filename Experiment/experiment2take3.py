@@ -6,7 +6,7 @@
 
 
 
-def classify(history, prev_class, prev_freq):
+def classify(history):
 
 	# classify history of length history_length based on criteria
 	LOW_FREQ = 0
@@ -15,7 +15,7 @@ def classify(history, prev_class, prev_freq):
 	HIGH_FREQ = 3
 	MID_FREQ = 4
 
-	zone = 1
+	increment = float(1)/float(len(history))
 	upper_threshold = .75
 	lower_threshold = .1
 
@@ -30,7 +30,7 @@ def classify(history, prev_class, prev_freq):
 	for item in history:
 		thing = int(item)
 		if thing == 1:
-			freq = freq+ 1
+			freq = freq + 1
 	freq1 = 0
 	for item in hist1:
 		thing = int(item)
@@ -42,18 +42,38 @@ def classify(history, prev_class, prev_freq):
 		if thing == 1:
 			freq2 = freq2 + 1
 
-	if (freq2 > freq1 + zone):
-		return INCREASING
-	elif (freq2 < freq1 - zone):
-		return DECREASING
-	else:
-		ratio = float(freq) / float(history_length)
-		if (ratio > upper_threshold):
-			return HIGH_FREQ
-		elif (ratio < lower_threshold):
-			return LOW_FREQ
-		else:
-			return MID_FREQ
+	# classify freq1 in zone 1 through N
+	check = 0
+	ratio1 = float(freq1) / float(half_len)
+	zone1 = 0
+	while (check < 1):
+		if (ratio1 > check):
+			zone1 = zone1 + 1
+		elif (ratio1 <= check):
+			break
+		check = check + increment
+	
+	# classify freq2 in zone 1 through N
+	check = 0
+	ratio2 = float(freq2) / float(half_len)
+	zone2 = 0
+	while (check < 1):
+		if (ratio2 > check):
+			zone2 = zone2 + 1
+		elif (ratio2 <= check):
+			break
+		check = check + increment
+
+	# compare the zones that the first and second halfs of the history were placed in
+	# if in the same zone, maintain current activation policy
+	# if X zones up/down, increase/decrease by X minutes
+	compare = zone2 - zone1
+	if (compare == 0):
+		return MID_FREQ, 0
+	if (compare < 0):
+		return DECREASING, abs(compare)
+	if (compare > 0):
+		return INCREASING, compare
 
 	return -1
 
@@ -87,9 +107,11 @@ def runExperiment(datafile, history_length, savename):
 	MID_FREQ = 4
 
 	LOW = 0
-	HIGH = 15
-	MID = 5
+	HIGH = 30
 	INCR = 1
+
+	# energy consumed per minute by a light associated with a single sensor
+	ENG_CONSUMED_PER_MIN = 11; 
 
 	datastream = open(datafile, "rw+")
 	timer = history_length
@@ -98,6 +120,7 @@ def runExperiment(datafile, history_length, savename):
 	num_mid_renew = 0
 	num_leave_off = 0
 	num_changes = 0
+	num_wasted_mins = 0
 
 	all_policy_actions = open(savename, "w")
 
@@ -117,6 +140,9 @@ def runExperiment(datafile, history_length, savename):
 		entry_array = entry.split()
 		for j in range(num_sensors):
 			history[j].append(entry_array[j])
+
+	active_minutes = 0
+	total_events = 0
 
 	stored_classifications = [-1] * num_sensors
 	length_of_policy = [LOW] * num_sensors
@@ -143,7 +169,8 @@ def runExperiment(datafile, history_length, savename):
 			#  policy = selected policy for sensor 
 			#  time_left = time remaining in the contract for sensor i
 			prev_classify = stored_classifications[i]
-			classification = classify(history[i])
+			classification, diff = classify(history[i])
+			increment = diff * 1
 			change = False
 			if (prev_classify != classification):
 				stored_classifications[i] = classification
@@ -161,12 +188,18 @@ def runExperiment(datafile, history_length, savename):
 
 			if (classification == INCREASING):
 				# increase time being added to policy renewal based on frequency/distribution data
-				length_of_policy[i] = length_of_policy[i] + INCR
+				if (length_of_policy[i] + increment < HIGH):
+					length_of_policy[i] = length_of_policy[i] + increment
+				else:
+					length_of_policy[i] = HIGH
 				cl = "INCREASING"
 
 			if (classification == DECREASING):
 				# decrease time being added to policy renewal based on frequency/distribution data
-				length_of_policy[i] = length_of_policy[i] - INCR
+				if (length_of_policy[i] - increment > 0):
+					length_of_policy[i] = length_of_policy[i] - increment
+				else:
+					length_of_policy[i] = 0
 				cl = "DECREASING"
 
 			if (classification == HIGH_FREQ):
@@ -174,20 +207,26 @@ def runExperiment(datafile, history_length, savename):
 				length_of_policy[i] = HIGH
 				cl = "HIGH"
 			if (classification == MID_FREQ):
-				cl = "mid"
+				cl = "maintain"
 
 			# handle current status update
 			if (int(entry_array[i]) == 1):
+				total_events = total_events + 1
 				if (time_left >= 1):
 					action = "CONTRACT RENEWED"
 					num_mid_renew = num_mid_renew + 1
 				elif (time_left == 0):
 					action = "TURN ON"
 					num_turn_on = num_turn_on + 1
-				if (length_of_policy[i] > timeInPolicy[i]):
+
+				if (timeInPolicy[i] == 0):
 					timeInPolicy[i] = length_of_policy[i]
 				elif (timeInPolicy[i] > 0):
-					timeInPolicy[i] = timeInPolicy[i] - 1
+					# if in policy, extend by a non-full amount of time
+					if (timeInPolicy[i] + increment < HIGH):
+						timeInPolicy[i] = timeInPolicy[i] + increment
+					else:
+						timeInPolicy[i] = HIGH
 
 			elif (int(entry_array[i]) == 0):
 				if (time_left == 1):
@@ -195,11 +234,20 @@ def runExperiment(datafile, history_length, savename):
 					num_expired = num_expired + 1
 				elif (time_left > 0):
 					action = "WAIT LIFESPAN"
+					num_wasted_mins = num_wasted_mins + 1
 				elif (time_left == 0):
 					action = "LEAVE OFF"
 					num_leave_off = num_leave_off + 1
 				if (timeInPolicy[i] > 0):
 					timeInPolicy[i] = timeInPolicy[i] - 1
+
+			## calculate energy consumption for given miunte
+			if (timeInPolicy[i] > 0):
+				# using_energy tracks the number of minutes single sensors are active
+				# i.e. if 4 sensors are active in a given minute, the var increases by 4
+				# then, each sensor activates a light that uses a given amount of energy per minute
+				# multiply final value of using_energy by this amount of energy
+				active_minutes = active_minutes + 1 
 
 			history[i] = update_history(history[i], entry_array[i])
 			all_policy_actions.write(t + "\t" + str(entry_array[i]) + "\t" + str(timeInPolicy[i]) + "\t" + str(length_of_policy[i]) + "\t" + action + "\t" + cl + "\n")
@@ -207,72 +255,109 @@ def runExperiment(datafile, history_length, savename):
 		timer = timer + 1
 		entry = datastream.readline()
 
-	all_policy_actions.write("number contracts renewed in middle: " + str(num_mid_renew) + "\n")
-	all_policy_actions.write("number contracts created from nothing: " + str(num_turn_on) + "\n")
-	all_policy_actions.write("number contracts expired: " + str(num_expired) + "\n")
-	all_policy_actions.write("number contracts left off: " + str(num_leave_off) + "\n")
-	all_policy_actions.write("number of category changes made: " + str(num_changes) + "\n")
+	energy = active_minutes * ENG_CONSUMED_PER_MIN
+	name = savename.split(".")
+	fo = open(name[0]+"_summary.txt", "w")
+	
+	fo.write("ENERGY USAGE: " + str(energy) + "\n")
+	fo.write("number of active minutes: " + str(active_minutes) +"\n")
+	fo.write("number of occupancy events: " + str(total_events) + "\n")
+	fo.write("number of wasted minutes: " + str(num_wasted_mins) + "\n")
+	fo.write("number contracts renewed in middle: " + str(num_mid_renew) + "\n")
+	fo.write("number contracts created from nothing: " + str(num_turn_on) + "\n")
+	fo.write("number contracts expired: " + str(num_expired) + "\n")
+	fo.write("number contracts left off: " + str(num_leave_off) + "\n")
 	all_policy_actions.close()
+	fo.close()
 
 
-hist_length = 5
+
+### generate all data files ###
+hist_length = 6
 
 filename = "experiment_data/first_week.txt"
-savename = "policies_exp2/policies_hist5_first.txt"
+savename = "policies3_exp2/policies_hist6_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "policies_exp2/policies_hist5_second.txt"
+savename = "policies3_exp2/policies_hist6_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "policies_exp2/policies_hist5_third.txt"
+savename = "policies3_exp2/policies_hist6_third.txt"
 runExperiment(filename, hist_length, savename)
 
 
 hist_length = 10
 
 filename = "experiment_data/first_week.txt"
-savename = "policies_exp2/policies_hist10_first.txt"
+savename = "policies3_exp2/policies_hist10_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "policies_exp2/policies_hist10_second.txt"
+savename = "policies3_exp2/policies_hist10_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "policies_exp2/policies_hist10_third.txt"
+savename = "policies3_exp2/policies_hist10_third.txt"
 runExperiment(filename, hist_length, savename)
 
 
-hist_length = 15
+hist_length = 20
 
 filename = "experiment_data/first_week.txt"
-savename = "policies_exp2/policies_hist15_first.txt"
+savename = "policies3_exp2/policies_hist20_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "policies_exp2/policies_hist15_second.txt"
+savename = "policies3_exp2/policies_hist20_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "policies_exp2/policies_hist15_third.txt"
+savename = "policies3_exp2/policies_hist20_third.txt"
 runExperiment(filename, hist_length, savename)
-
 
 
 hist_length = 30
 
 filename = "experiment_data/first_week.txt"
-savename = "policies_exp2/policies_hist30_first.txt"
+savename = "policies3_exp2/policies_hist30_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "policies_exp2/policies_hist30_second.txt"
+savename = "policies3_exp2/policies_hist30_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "policies_exp2/policies_hist30_third.txt"
+savename = "policies3_exp2/policies_hist30_third.txt"
+runExperiment(filename, hist_length, savename)
+
+hist_length = 40
+
+filename = "experiment_data/first_week.txt"
+savename = "policies3_exp2/policies_hist40_first.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/second_week.txt"
+savename = "policies3_exp2/policies_hist40_second.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/third_week.txt"
+savename = "policies3_exp2/policies_hist40_third.txt"
+runExperiment(filename, hist_length, savename)
+
+hist_length = 60
+
+filename = "experiment_data/first_week.txt"
+savename = "policies3_exp2/policies_hist60_first.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/second_week.txt"
+savename = "policies3_exp2/policies_hist60_second.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/third_week.txt"
+savename = "policies3_exp2/policies_hist60_third.txt"
 runExperiment(filename, hist_length, savename)
 
 

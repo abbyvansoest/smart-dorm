@@ -1,0 +1,31 @@
+total number of people walking through: 3323
+5
+number of active minutes: 11222
+number wasted minutes: 7899
+number contracts renewed in middle: 1858
+number contracts created from nothing: 1465
+number contracts expired: 1464
+10
+number of active minutes: 17622
+number wasted minutes: 14299
+number contracts renewed in middle: 2276
+number contracts created from nothing: 1047
+number contracts expired: 1046
+15
+number of active minutes: 22336
+number wasted minutes: 19013
+number contracts renewed in middle: 2514
+number contracts created from nothing: 809
+number contracts expired: 808
+20
+number of active minutes: 25993
+number wasted minutes: 22670
+number contracts renewed in middle: 2695
+number contracts created from nothing: 628
+number contracts expired: 626
+30
+number of active minutes: 31429
+number wasted minutes: 28106
+number contracts renewed in middle: 2864
+number contracts created from nothing: 459
+number contracts expired: 456
