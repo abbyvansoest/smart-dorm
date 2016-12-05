@@ -1,8 +1,8 @@
-ENERGY USAGE: 427394
-number of active minutes: 38854
+ENERGY USAGE: 345389
+number of active minutes: 31399
 number of occupancy events: 13666
-number of wasted minutes: 26352
-number contracts renewed in middle: 11774
-number contracts created from nothing: 1892
-number contracts expired: 722
-number contracts left off: 19374
+number of wasted minutes: 20299
+number contracts renewed in middle: 9920
+number contracts created from nothing: 3746
+number contracts expired: 1176
+number contracts left off: 24973
