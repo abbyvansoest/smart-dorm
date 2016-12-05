@@ -14,15 +14,11 @@ for f in files:
 		mylist.append(entry)
 		entry = fo.readline()
 
-	# remove final 6 (worded) entries 
-	length = len(mylist)
-	mylist = mylist[:length - 6]
-	length = len(mylist)
-
 	name = "separated/"+f
 	end_file = open(name, "w")
 
 	#  go through list of strings starting at
+	length = len(mylist)
 	print length
 	increment = 6
 	for start in range(0, 6):

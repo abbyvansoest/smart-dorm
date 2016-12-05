@@ -10070,6 +10070,7 @@
 167:55	0	0	0	LEAVE OFF	maintain
 167:56	0	0	0	LEAVE OFF	maintain
 167:57	0	0	0	LEAVE OFF	maintain
+167:58	0	0	0	LEAVE OFF	maintain
 *********************
 00:06	1	0	0	TURN ON	maintain
 00:07	0	0	2	LEAVE OFF	INCREASING
@@ -20143,6 +20144,7 @@
 167:55	0	0	0	LEAVE OFF	maintain
 167:56	0	0	0	LEAVE OFF	maintain
 167:57	0	0	0	LEAVE OFF	maintain
+167:58	0	0	0	LEAVE OFF	maintain
 *********************
 00:06	1	0	0	TURN ON	maintain
 00:07	0	0	2	LEAVE OFF	INCREASING
@@ -30216,6 +30218,7 @@
 167:55	0	0	0	LEAVE OFF	maintain
 167:56	0	0	0	LEAVE OFF	maintain
 167:57	0	0	0	LEAVE OFF	maintain
+167:58	0	0	0	LEAVE OFF	maintain
 *********************
 00:06	0	0	0	LEAVE OFF	maintain
 00:07	0	0	0	LEAVE OFF	maintain
@@ -40289,6 +40292,7 @@
 167:55	0	4	0	WAIT LIFESPAN	maintain
 167:56	1	4	0	CONTRACT RENEWED	maintain
 167:57	0	3	2	WAIT LIFESPAN	INCREASING
+167:58	0	2	4	WAIT LIFESPAN	INCREASING
 *********************
 00:06	0	0	0	LEAVE OFF	maintain
 00:07	0	0	0	LEAVE OFF	maintain
@@ -50362,6 +50366,7 @@
 167:55	0	5	0	WAIT LIFESPAN	maintain
 167:56	0	4	0	WAIT LIFESPAN	maintain
 167:57	0	3	0	WAIT LIFESPAN	maintain
+167:58	0	2	0	WAIT LIFESPAN	maintain
 *********************
 00:06	0	0	0	LEAVE OFF	maintain
 00:07	0	0	0	LEAVE OFF	maintain
@@ -60435,4 +60440,5 @@
 167:55	0	0	0	LEAVE OFF	maintain
 167:56	0	0	0	LEAVE OFF	maintain
 167:57	0	0	0	LEAVE OFF	maintain
+167:58	0	0	0	LEAVE OFF	maintain
 *********************

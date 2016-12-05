@@ -1,6 +1,0 @@
-ENERGY USAGE: 68981	6271
-number of wasted minutes: 4314
-number contracts renewed in middle: 1293
-number contracts created from nothing: 2030
-number contracts expired: 664
-number contracts left off: 52137
