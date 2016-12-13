@@ -128,7 +128,6 @@ def classify(history, hour):
 
 	# classify history trend over time
 		# use partialization by 3 (not 2)
-	UNKNOWN = -1
 	STEADY = 0
 	INCREASING = 1 
 	DECREASING = 2
@@ -230,14 +229,9 @@ def runExperiment(datafile, history_length, savename):
 
 	# classify history trend over time
 		# use partialization by 3 (not 2)
-	UNKNOWN = -1
 	STEADY = 0
 	INCREASING = 1 
 	DECREASING = 2
-
-	LOW = 2
-	HIGH = 15
-	INCR = 1
 
 	datastream = open(datafile, "rw+")
 	timer = history_length*3
@@ -246,6 +240,7 @@ def runExperiment(datafile, history_length, savename):
 	num_mid_renew = 0
 	num_leave_off = 0
 	num_wasted_mins = 0
+	total_events = 0
 
 	all_policy_actions = open(savename, "w")
 
@@ -270,7 +265,6 @@ def runExperiment(datafile, history_length, savename):
 	# history tracking list for each sensor
 	track = [[] for k in range(num_sensors)]
 
-	total_events = 0
 
 	entry = datastream.readline()
 
@@ -314,8 +308,6 @@ def runExperiment(datafile, history_length, savename):
 				t_str = "DECREASING"
 			if (trend == STEADY):
 				t_str = "STEADY"
-			if (trend == UNKNOWN):
-				t_str = "UNKNOWN"
 			#print fc_str + ", "+ t_str
 
 			time_left = timeInPolicy[i]
@@ -348,7 +340,7 @@ def runExperiment(datafile, history_length, savename):
 						elif (time_left > 1):
 							timeInPolicy[i] = 1
 
-				elif (trend == STEADY or trend == UNKNOWN):
+				elif (trend == STEADY):
 					length_of_policy[i] = 1
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
@@ -384,7 +376,7 @@ def runExperiment(datafile, history_length, savename):
 						elif (time_left > 1):
 							timeInPolicy[i] = time_left - 2
 
-				elif (trend == STEADY or trend == UNKNOWN):
+				elif (trend == STEADY):
 					length_of_policy[i] == 5
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
@@ -418,7 +410,7 @@ def runExperiment(datafile, history_length, savename):
 						if (timeInPolicy[i] > 0):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
-				elif (trend == STEADY or trend == UNKNOWN):
+				elif (trend == STEADY):
 					length_of_policy[i] = 8
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
@@ -452,7 +444,7 @@ def runExperiment(datafile, history_length, savename):
 						if (timeInPolicy[i] > 0):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
-				elif (trend == STEADY or trend == UNKNOWN):
+				elif (trend == STEADY):
 					length_of_policy[i] = 9
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
@@ -508,19 +500,61 @@ def runExperiment(datafile, history_length, savename):
 
 ### generate all data files ###
 
+hist_length = 10
+
+filename = "experiment_data/first_week.txt"
+savename = "dcg/hist10_first.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/second_week.txt"
+savename = "dcg/hist10_second.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/third_week.txt"
+savename = "dcg/hist10_third.txt"
+runExperiment(filename, hist_length, savename)
 
 hist_length = 15
 
 filename = "experiment_data/first_week.txt"
-savename = "dcg/policies_hist15_first.txt"
+savename = "dcg/hist15_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "dcg/policies_hist15_second.txt"
+savename = "dcg/hist15_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "dcg/policies_hist15_third.txt"
+savename = "dcg/hist15_third.txt"
+runExperiment(filename, hist_length, savename)
+
+
+hist_length = 20
+
+filename = "experiment_data/first_week.txt"
+savename = "dcg/hist20_first.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/second_week.txt"
+savename = "dcg/hist20_second.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/third_week.txt"
+savename = "dcg/hist20_third.txt"
+runExperiment(filename, hist_length, savename)
+
+hist_length = 30
+
+filename = "experiment_data/first_week.txt"
+savename = "dcg/hist30_first.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/second_week.txt"
+savename = "dcg/hist30_second.txt"
+runExperiment(filename, hist_length, savename)
+
+filename = "experiment_data/third_week.txt"
+savename = "dcg/hist30_third.txt"
 runExperiment(filename, hist_length, savename)
 
 

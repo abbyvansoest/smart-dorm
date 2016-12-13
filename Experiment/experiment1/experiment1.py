@@ -1,3 +1,10 @@
+# calculate energy consumption by lights based on sensor activity
+def calculate_energy(active_minutes):
+	total_active = active_minutes
+		# energy consumed per minute by a light associated with a single sensor
+	hours_active = float(total_active)/float(60)
+	POWER = 11; 
+	return float(POWER*hours_active)/float(1000.)
 
 # select policy for each time period based on current activity
 def choosePolicy(cur_activity):
@@ -33,10 +40,9 @@ def runExperiment(datafile, contract_length, savename):
 	timer = 0
 	num_mid_renew = 0
 	num_turn_on = 0
-	num_expired = 0
 	num_mins_active = 0
 	num_minutes_wasted = 0
-	total_active = 0
+	occupancy_events = 0
 	all_policy_actions = open(savename, "w")
 
 	#  read in first line - has number of sensors being used
@@ -74,8 +80,13 @@ def runExperiment(datafile, contract_length, savename):
 			#  policy = selected policy for sensor 
 			#  time_left = time remaining in the contract for sensor i
 			policy = choosePolicy(int(entry_array[i]))
-			total_active = total_active + int(entry_array[i])
+			occupancy_events = occupancy_events + int(entry_array[i])
 			time_left = timeInPolicy[i]
+
+			if (time_left > 0):
+				num_mins_active = num_mins_active + 1
+			# if (int(entry_array[i]) == 1):
+			# 	occupancy_events = occupancy_events + 1
 			action = ""
 
 			if (policy == RENEW):
@@ -92,20 +103,16 @@ def runExperiment(datafile, contract_length, savename):
 					num_turn_on = num_turn_on + 1
 					action = "TURNED ON"
 					
-				num_mins_active = num_mins_active + 1
-				
 				timeInPolicy[i] = contract_length
 			
 			elif (policy == LEAVE_OFF):
 				# if  just expired
 				if (time_left == 1):
-					num_expired = num_expired + 1
 					action = "CONTRACT EXPIRED"
 				
 				elif (time_left > 1):
 					action = "LIVING OUT CONTRACT"
 					num_minutes_wasted = num_minutes_wasted + 1
-					num_mins_active = num_mins_active + 1
 				
 				else:
 					action = "LEFT OFF"
@@ -114,97 +121,48 @@ def runExperiment(datafile, contract_length, savename):
 				if (time_left > 0):
 					timeInPolicy[i] = timeInPolicy[i] - 1
 
-		# 	print t
-		# 	print entry
-		# 	print action
-		# 	print "time left: " + str(timeInPolicy[i])
-
 	 		all_policy_actions.write(str(timer) + "\t" + t + "\t" + str(time_left) + "\t" + action + "\n")
 
-		# print "*************\n"
 		timer = timer + 1
 		entry = datastream.readline()
 
 	print num_mid_renew
 	print num_turn_on
 
-	all_policy_actions.write("number of active minutes: " + str(num_mins_active) + "\n")
-	all_policy_actions.write("number wasted minutes: " + str(num_minutes_wasted) + "\n")
-	all_policy_actions.write("total number of people walking through: " + str(total_active) + "\n")
-	all_policy_actions.write("number contracts renewed in middle: " + str(num_mid_renew) + "\n")
-	all_policy_actions.write("number contracts created from nothing: " + str(num_turn_on) + "\n")
-	all_policy_actions.write("number contracts expired: " + str(num_expired) + "\n")
+	energy = calculate_energy(num_mins_active)
+	print energy
+	name = savename.split(".")
+	fo = open(name[0]+"_summary.txt", "w")
+
+	fo.write("ENERGY USAGE: " + str(energy) + "\n")
+	fo.write("number of active minutes: " + str(num_mins_active) + "\n")
+	fo.write("number of occupancy events: " + str(occupancy_events) + "\n")
+	fo.write("number wasted minutes: " + str(num_minutes_wasted) + "\n")
+	fo.write("number contracts renewed in middle: " + str(num_mid_renew) + "\n")
+	fo.write("number contracts created from nothing: " + str(num_turn_on) + "\n")
+	fo.close()
 	all_policy_actions.close()
 
-contract_length = 5
+
+
+# run simulation for various contract extension lengths
+# collect data for each
+
+contract_length = 500
 
 filename = "experiment_data/first_week.txt"
-savename = "policies_exp1/selected_policies_first5.txt"
+savename = "baselines/first_on_always.txt"
 runExperiment(filename, contract_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "policies_exp1/selected_policies_second5.txt"
+savename = "baselines/second_on_always.txt"
 runExperiment(filename, contract_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "policies_exp1/selected_policies_third5.txt"
+savename = "baselines/third_on_always.txt"
 runExperiment(filename, contract_length, savename)
 
-contract_length = 10
 
-filename = "experiment_data/first_week.txt"
-savename = "policies_exp1/selected_policies_first10.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/second_week.txt"
-savename = "policies_exp1/selected_policies_second10.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/third_week.txt"
-savename = "policies_exp1/selected_policies_third10.txt"
-runExperiment(filename, contract_length, savename)
-
-contract_length = 15
-
-filename = "experiment_data/first_week.txt"
-savename = "policies_exp1/selected_policies_first15.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/second_week.txt"
-savename = "policies_exp1/selected_policies_second15.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/third_week.txt"
-savename = "policies_exp1/selected_policies_third15.txt"
-runExperiment(filename, contract_length, savename)
-
-contract_length = 20
-
-filename = "experiment_data/first_week.txt"
-savename = "policies_exp1/selected_policies_first20.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/second_week.txt"
-savename = "policies_exp1/selected_policies_second20.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/third_week.txt"
-savename = "policies_exp1/selected_policies_third20.txt"
-runExperiment(filename, contract_length, savename)
-
-contract_length = 30
-
-filename = "experiment_data/first_week.txt"
-savename = "selected_policies_first30.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/second_week.txt"
-savename = "selected_policies_second30.txt"
-runExperiment(filename, contract_length, savename)
-
-filename = "experiment_data/third_week.txt"
-savename = "selected_policies_third30.txt"
-runExperiment(filename, contract_length, savename)
 
 
 

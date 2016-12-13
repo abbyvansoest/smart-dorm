@@ -17,6 +17,7 @@
 # use global average? of ratios etc.
 
 import random
+import math 
 
 # calculate energy consumption by lights based on sensor activity
 def calculate_energy(active_minutes):
@@ -28,6 +29,87 @@ def calculate_energy(active_minutes):
 	POWER = 11; 
 	return float(POWER*hours_active)/float(1000), total_active
 
+def get_dcg(sequence):
+	dcg_ones = 0.0
+	dcg_back = 0.0
+	dcg_zeros = 0.0
+	dcg_zeros_back = 0.0
+
+	one_freq = 0
+	zero_freq = 0
+
+	for j in range(1,len(sequence)+1):
+		i = len(sequence)+1 - j
+		
+		dcg_ones = dcg_ones + sequence[i-1]/math.log(j+1,2)#float(j)
+		dcg_back = dcg_back + sequence[j-1]/math.log(j+1,2)#float(j)
+
+		if (sequence[i-1] == 0):
+			use1 = 1
+		else:
+			use1 = 0
+		if (sequence[j-1] == 0):
+			use2 = 1
+		else:
+			use2 = 0
+		dcg_zeros = dcg_zeros + use1/math.log(j+1,2)#float(j)
+		dcg_zeros_back = dcg_zeros_back + use2/math.log(j+1,2)#float(j)
+
+		if (sequence[j-1]==1):
+			one_freq = one_freq + 1
+		else:
+			zero_freq = zero_freq + 1
+
+	if (one_freq == 0):
+		diff1 = 0
+	else:
+		diff1 = dcg_ones/one_freq - dcg_back/one_freq
+	if (zero_freq == 0):
+		diff0 = 0
+	else:
+		diff0 = dcg_zeros/zero_freq - dcg_zeros_back/zero_freq 
+
+	return diff1, diff0
+
+# how many std deviations from the mean is this value
+# how many std deviations from the mean is this value
+def stddev(average, history_length):
+	if (history_length == 5):
+		sd = .0993
+		mean = .0000759 
+	if (history_length == 10):
+		sd = .0775
+		mean = .0001
+	if (history_length == 15):
+		sd = 0.0657412560821
+		mean = 5.19945496431e-05
+		# or:
+		# sd = 0.054582911188
+		# mean = -2.02697717924e-05
+	if (history_length == 20):
+		sd = 0.0401660169834
+		mean = -1.35369388876e-05
+	if (history_length == 25):
+		sd = 0.0313746923101
+		mean = 9.12079000843e-06
+	if (history_length == 30):
+		sd = .02259
+		mean = 0
+	return (average - mean)/sd
+
+def get_freq_thresholds(history_length):
+	
+	if (history_length == 5):
+		return 0, .4, .8
+	if (history_length == 10):
+		return .1, .34, .67
+	if (history_length == 15):
+		return 0.07, 0.27, 0.47
+	if (history_length == 20):
+		return .1, .34, .67
+	if (history_length == 30):
+		return .134, .3, .634
+
 def classify(history, hour):
 
 	if (len(history) >= 45):
@@ -35,25 +117,22 @@ def classify(history, hour):
 		if (hour == -1):
 			hour = 23
 
+	history_length = int(len(history)/3)
 	# classify history frequency
 	LOW_FREQ = 0
 	MID_LOW_FREQ = 1
 	MID_HIGH_FREQ = 2
 	HIGH_FREQ = 3 
-	lower_thresh = 0.07
-	middle_thresh = 0.27
-	upper_thresh = 0.47
+	lower_thresh, middle_thresh, upper_thresh = get_freq_thresholds(history_length)
 
 	span = .005
 
 	# classify history trend over time
 		# use partialization by 3 (not 2)
-	UNKNOWN = -1
 	STEADY = 0
 	INCREASING = 1 
 	DECREASING = 2
 
-	history_length = int(len(history)/3)
 	hist1 = history[0:history_length]
 	hist2 = history[history_length:2*history_length]
 	hist3 = history[2*history_length:len(history)]
@@ -83,27 +162,38 @@ def classify(history, hour):
 	frequency_class = -1
 
 	# classify frequency
-	if (ratio3 < lower_thresh):
+	if (ratio3 <= lower_thresh):
 		frequency_class = LOW_FREQ
-	elif (ratio3 < middle_thresh):
+	elif (ratio3 <= middle_thresh):
 		frequency_class = MID_LOW_FREQ
-	elif (ratio3 < upper_thresh):
+	elif (ratio3 <= upper_thresh):
 		frequency_class = MID_HIGH_FREQ
 	else:
 		frequency_class = HIGH_FREQ
 
 	# classify trend over time
-	trend = UNKNOWN
-	# increasing or decreasing if trend is strong enough over time
-	if (ratio3 > ratio2+span and ratio2 >= ratio1+span):
-		trend = INCREASING
-	elif (ratio3 < ratio2-span and ratio2 <= ratio1-span):
-		trend = DECREASING
-	# steady if trends are minor enough over time
-	elif (ratio3 < ratio2+span and ratio3 > ratio2 - span and ratio3 < ratio1+span and ratio3 > ratio1 - span):
+	# use dcg function 
+	thresh = .75
+	neg_thresh = -.75
+	dcg1, dcg0 = get_dcg(hist3)
+	avg = (dcg1 + dcg0)/2.0
+	sd = stddev(avg, history_length)
+	if (sd >= thresh):
+		# which dcg is it in agreement with
+		if (dcg1 > 0):
+			trend = INCREASING
+		elif(dcg0 > 0):
+			trend = DECREASING
+	elif (sd <= neg_thresh):
+		if (dcg1 < 0):
+			trend = DECREASING
+		elif (dcg0 < 0):
+			trend = INCREASING
+	else:
 		trend = STEADY
 
-	return frequency_class, trend
+	# selected fc, raw ratio data, selected trend, raw average and std dev of dcg metric
+	return frequency_class, ratio3, trend, avg, sd
 
 def classify_histories(histories, index, hour):
 
@@ -115,19 +205,24 @@ def classify_histories(histories, index, hour):
 
 	# classify history trend over time
 		# use partialization by 3 (not 2)
-	UNKNOWN = -1
 	STEADY = 0
 	INCREASING = 1 
 	DECREASING = 2
 
-	freq_classes = []
-	trend_classes = []
+	fc = []
+	trends = []
+	ratios = []
+	avgs = []
+	sds = []
 
 	# classify each history being tracked
 	for hist in histories:
-		fc, trend = classify(hist, hour)
-		freq_classes.append(fc)
-		trend_classes.append(trend)
+		freqc, ratio, trend, avg, sd = classify(hist, hour)
+		fc.append(freqc)
+		trends.append(trend)
+		ratios.append(ratio)
+		avgs.append(avg)
+		sds.append(sd)
 
 	# find average / most common frequency and trend class
 	counts_freq = [0]*4
@@ -145,7 +240,8 @@ def classify_histories(histories, index, hour):
 	max_t = max(counts_trend)
 	trend_final = counts_trend.index(max_t)
 
-	this_fc, this_t = classify(histories[index], hour)
+	this_fc = fc[index]
+	this_t = trends[index]
 	changed_fc = False
 	changed_t = False
 
@@ -205,17 +301,13 @@ def runExperiment(datafile, history_length, savename):
 
 	# classify history trend over time
 		# use partialization by 3 (not 2)
-	UNKNOWN = -1
 	STEADY = 0
 	INCREASING = 1 
 	DECREASING = 2
 
-	LOW = 2
-	HIGH = 15
-	INCR = 1
-
 	datastream = open(datafile, "rw+")
 	timer = history_length*3
+
 	num_turn_on = 0
 	num_expired = 0
 	num_mid_renew = 0
@@ -298,6 +390,7 @@ def runExperiment(datafile, history_length, savename):
 			else:
 				frequency_class = stored_fc[i]
 				trend = stored_t[i]
+
 			fc_str = ""
 			t_str = ""
 			if (frequency_class == LOW_FREQ):
@@ -314,8 +407,6 @@ def runExperiment(datafile, history_length, savename):
 				t_str = "DECREASING"
 			if (trend == STEADY):
 				t_str = "STEADY"
-			if (trend == UNKNOWN):
-				t_str = "UNKNOWN"
 			#print fc_str + ", "+ t_str
 
 			time_left = timeInPolicy[i]
@@ -336,7 +427,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = time_left - 1
 
 				elif (trend == DECREASING):
-					length_of_policy[i] = 1
+					length_of_policy[i] = 2
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -348,8 +439,8 @@ def runExperiment(datafile, history_length, savename):
 						elif (time_left > 1):
 							timeInPolicy[i] = 1
 
-				elif (trend == STEADY or trend == UNKNOWN):
-					length_of_policy[i] = 2
+				elif (trend == STEADY):
+					length_of_policy[i] = 1
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -372,7 +463,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = time_left - 1
 							
 				elif (trend == DECREASING):
-					length_of_policy[i] = 3
+					length_of_policy[i] = 4
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -384,8 +475,8 @@ def runExperiment(datafile, history_length, savename):
 						elif (time_left > 1):
 							timeInPolicy[i] = time_left - 2
 
-				elif (trend == STEADY or trend == UNKNOWN):
-					length_of_policy[i] == 4
+				elif (trend == STEADY):
+					length_of_policy[i] == 5
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -397,7 +488,7 @@ def runExperiment(datafile, history_length, savename):
 
 			if (frequency_class == MID_HIGH_FREQ):
 				if (trend == INCREASING):
-					length_of_policy[i] = 12
+					length_of_policy[i] = 9
 					if (int(entry_array[i]) == 1):
 						if (in_policy and time_left > length_of_policy[i] - 5):
 							timeInPolicy[i] = time_left
@@ -408,7 +499,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
 				elif (trend == DECREASING):
-					length_of_policy[i] = 6
+					length_of_policy[i] = 7
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -418,7 +509,7 @@ def runExperiment(datafile, history_length, savename):
 						if (timeInPolicy[i] > 0):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
-				elif (trend == STEADY or trend == UNKNOWN):
+				elif (trend == STEADY):
 					length_of_policy[i] = 8
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
@@ -431,7 +522,7 @@ def runExperiment(datafile, history_length, savename):
 
 			if (frequency_class == HIGH_FREQ):
 				if (trend == INCREASING):
-					length_of_policy[i] = 20
+					length_of_policy[i] = 10
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -442,7 +533,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
 				elif (trend == DECREASING):
-					length_of_policy[i] = 12
+					length_of_policy[i] = 8
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -452,8 +543,8 @@ def runExperiment(datafile, history_length, savename):
 						if (timeInPolicy[i] > 0):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
-				elif (trend == STEADY or trend == UNKNOWN):
-					length_of_policy[i] = 15
+				elif (trend == STEADY):
+					length_of_policy[i] = 9
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left

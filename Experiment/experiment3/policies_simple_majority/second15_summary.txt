@@ -1,7 +1,0 @@
-ENERGY USAGE (kWh): 4.91351666667
-Cost ($): 0.938481683333
-number of active minutes: 26801
-number of occupancy events: 13666
-number of wasted minutes: 17357
-number contracts renewed in middle: 9443
-number contracts created from nothing: 4221

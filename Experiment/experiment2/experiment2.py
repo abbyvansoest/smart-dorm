@@ -430,78 +430,63 @@ def runExperiment(datafile, history_length, savename):
 ### generate all data files ###
 
 
-hist_length = 5
-
-filename = "experiment_data/first_week.txt"
-savename = "improve_classify/policies_hist5_first.txt"
-runExperiment(filename, hist_length, savename)
-
-filename = "experiment_data/second_week.txt"
-savename = "improve_classify/policies_hist5_second.txt"
-runExperiment(filename, hist_length, savename)
-
-filename = "experiment_data/third_week.txt"
-savename = "improve_classify/policies_hist5_third.txt"
-runExperiment(filename, hist_length, savename)
-
-
 hist_length = 10
 
 filename = "experiment_data/first_week.txt"
-savename = "improve_classify/policies_hist10_first.txt"
+savename = "improve_classify/policy/hist10_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "improve_classify/policies_hist10_second.txt"
+savename = "improve_classify/policy/hist10_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "improve_classify/policies_hist10_third.txt"
+savename = "improve_classify/policy/hist10_third.txt"
 runExperiment(filename, hist_length, savename)
 
 
 hist_length = 15
 
 filename = "experiment_data/first_week.txt"
-savename = "improve_classify/policies_hist15_first.txt"
+savename = "improve_classify/policy/hist15_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "improve_classify/policies_hist15_second.txt"
+savename = "improve_classify/policy/hist15_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "improve_classify/policies_hist15_third.txt"
+savename = "improve_classify/policy/hist15_third.txt"
 runExperiment(filename, hist_length, savename)
 
 
 hist_length = 20
 
 filename = "experiment_data/first_week.txt"
-savename = "improve_classify/policies_hist20_first.txt"
+savename = "improve_classify/policy/hist20_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "improve_classify/policies_hist20_second.txt"
+savename = "improve_classify/policy/hist20_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "improve_classify/policies_hist20_third.txt"
+savename = "improve_classify/policy/hist20_third.txt"
 runExperiment(filename, hist_length, savename)
 
 
 hist_length = 30
 
 filename = "experiment_data/first_week.txt"
-savename = "improve_classify/policies_hist30_first.txt"
+savename = "improve_classify/policy/hist30_first.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/second_week.txt"
-savename = "improve_classify/policies_hist30_second.txt"
+savename = "improve_classify/policy/hist30_second.txt"
 runExperiment(filename, hist_length, savename)
 
 filename = "experiment_data/third_week.txt"
-savename = "improve_classify/policies_hist30_third.txt"
+savename = "improve_classify/policy/hist30_third.txt"
 runExperiment(filename, hist_length, savename)
 
 
