@@ -1,0 +1,31 @@
+total activity of sensor 0: 2168
+active at same time as 1+ neighbors: 1851
+only sensor active: 138
+*****************************************
+
+total activity of sensor 1: 2406
+active at same time as 1+ neighbors: 2487
+only sensor active: 85
+*****************************************
+
+total activity of sensor 2: 2696
+active at same time as 1+ neighbors: 3654
+only sensor active: 139
+*****************************************
+
+total activity of sensor 3: 2095
+active at same time as 1+ neighbors: 1258
+only sensor active: 941
+*****************************************
+
+total activity of sensor 4: 2010
+active at same time as 1+ neighbors: 574
+only sensor active: 339
+*****************************************
+
+total activity of sensor 5: 1290
+active at same time as 1+ neighbors: 688
+only sensor active: 349
+*****************************************
+
+total activity across all sensors: 12665

@@ -22,8 +22,22 @@ def calculate_energy(active_minutes):
 	for num in active_minutes:
 		total_active = total_active + num
 		# energy consumed per minute by a light associated with a single sensor
-	ENG_CONSUMED_PER_MIN = 1; 
-	return ENG_CONSUMED_PER_MIN*total_active, total_active
+	hours_active = float(total_active)/float(60)
+	POWER = 11; 
+	return float(POWER*hours_active)/float(1000.), total_active
+
+def get_freq_thresholds(history_length):
+	
+	if (history_length == 5):
+		return 0, .4, .8
+	if (history_length == 10):
+		return .1, .34, .67
+	if (history_length == 15):
+		return 0.07, 0.27, 0.47
+	if (history_length == 20):
+		return .1, .34, .67
+	if (history_length == 30):
+		return .134, .3, .634
 
 def classify(history, hour):
 
@@ -32,14 +46,13 @@ def classify(history, hour):
 		if (hour == -1):
 			hour = 23
 
+	history_length = int(len(history)/3)
 	# classify history frequency
 	LOW_FREQ = 0
 	MID_LOW_FREQ = 1
 	MID_HIGH_FREQ = 2
 	HIGH_FREQ = 3 
-	lower_thresh = 0.07
-	middle_thresh = 0.27
-	upper_thresh = 0.47
+	lower_thresh, middle_thresh, upper_thresh = get_freq_thresholds(history_length)
 
 	span = .005
 
@@ -50,7 +63,6 @@ def classify(history, hour):
 	INCREASING = 1 
 	DECREASING = 2
 
-	history_length = int(len(history)/3)
 	hist1 = history[0:history_length]
 	hist2 = history[history_length:2*history_length]
 	hist3 = history[2*history_length:len(history)]
@@ -244,7 +256,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = time_left - 1
 
 				elif (trend == DECREASING):
-					length_of_policy[i] = 1
+					length_of_policy[i] = 2
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -257,7 +269,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = 1
 
 				elif (trend == STEADY or trend == UNKNOWN):
-					length_of_policy[i] = 2
+					length_of_policy[i] = 1
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -280,7 +292,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = time_left - 1
 							
 				elif (trend == DECREASING):
-					length_of_policy[i] = 3
+					length_of_policy[i] = 4
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -293,7 +305,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = time_left - 2
 
 				elif (trend == STEADY or trend == UNKNOWN):
-					length_of_policy[i] == 4
+					length_of_policy[i] == 5
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -305,7 +317,7 @@ def runExperiment(datafile, history_length, savename):
 
 			if (frequency_class == MID_HIGH_FREQ):
 				if (trend == INCREASING):
-					length_of_policy[i] = 12
+					length_of_policy[i] = 9
 					if (int(entry_array[i]) == 1):
 						if (in_policy and time_left > length_of_policy[i] - 5):
 							timeInPolicy[i] = time_left
@@ -316,7 +328,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
 				elif (trend == DECREASING):
-					length_of_policy[i] = 6
+					length_of_policy[i] = 7
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -339,7 +351,7 @@ def runExperiment(datafile, history_length, savename):
 
 			if (frequency_class == HIGH_FREQ):
 				if (trend == INCREASING):
-					length_of_policy[i] = 20
+					length_of_policy[i] = 10
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -350,7 +362,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
 				elif (trend == DECREASING):
-					length_of_policy[i] = 12
+					length_of_policy[i] = 8
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -361,7 +373,7 @@ def runExperiment(datafile, history_length, savename):
 							timeInPolicy[i] = timeInPolicy[i] - 1
 
 				elif (trend == STEADY or trend == UNKNOWN):
-					length_of_policy[i] = 15
+					length_of_policy[i] = 9
 					if (int(entry_array[i]) == 1):
 						if (in_policy):
 							timeInPolicy[i] = time_left
@@ -401,6 +413,7 @@ def runExperiment(datafile, history_length, savename):
 		entry = datastream.readline()
 
 	energy, total_active = calculate_energy(active_minutes)
+	print energy
 	name = savename.split(".")
 	fo = open(name[0]+"_summary.txt", "w")
 	
@@ -462,7 +475,6 @@ savename = "improve_classify/policies_hist15_third.txt"
 runExperiment(filename, hist_length, savename)
 
 
-
 hist_length = 20
 
 filename = "experiment_data/first_week.txt"
@@ -476,7 +488,6 @@ runExperiment(filename, hist_length, savename)
 filename = "experiment_data/third_week.txt"
 savename = "improve_classify/policies_hist20_third.txt"
 runExperiment(filename, hist_length, savename)
-
 
 
 hist_length = 30

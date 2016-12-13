@@ -1,0 +1,4 @@
+total activity across all sensors, from this sensor's perspecive: 6281
+total activity of sensor 4: 2010
+active at same time as 1+ neighbors: 574
+only sensor active: 339

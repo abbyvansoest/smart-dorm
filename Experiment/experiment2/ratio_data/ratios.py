@@ -7,7 +7,7 @@ def autolabel(rects):
     for rect in rects:
         height = rect.get_height()
         if (firstRect):
-        	ax.text(rect.get_x() + (rect.get_width()+.5)/2., 1.01*height + 250,
+        	ax.text(rect.get_x() + (rect.get_width()+.5t)/2., 1.01*height + 250,
     	            '%d' % int(height*2),
         	        ha='center', va='bottom', rotation='vertical')
         	firstRect = False;
@@ -15,6 +15,7 @@ def autolabel(rects):
 	        ax.text(rect.get_x() + (rect.get_width()+.01)/2., 1.01*height + 250,
     	            '%d' % int(height),
         	        ha='center', va='bottom', rotation='vertical')
+
 
 length = 30
 filename = "ratios" + str(length) + ".txt"
