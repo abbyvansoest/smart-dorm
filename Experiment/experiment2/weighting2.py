@@ -37,10 +37,11 @@ def get_dcg(sequence):
 		else:
 			zero_freq = zero_freq + 1
 
-	# print dcg_ones
-	# print dcg_back
-	# print dcg_zeros
-	# print "\n"
+	print dcg_ones
+	print dcg_back
+	print dcg_zeros
+	print dcg_zeros_back
+	print "\n"
 
 	# print dcg_ones/one_freq
 	# print dcg_back/one_freq
@@ -48,8 +49,8 @@ def get_dcg(sequence):
 		diff1 = 0
 	else:
 		diff1 = dcg_ones/one_freq - dcg_back/one_freq
-	# print diff1
-	# print "\n"
+	print diff1
+	
 
 	# print dcg_zeros/zero_freq
 	# print dcg_zeros_back/zero_freq
@@ -57,52 +58,52 @@ def get_dcg(sequence):
 		diff0 = 0
 	else:
 		diff0 = dcg_zeros/zero_freq - dcg_zeros_back/zero_freq 
-	# print diff0
+	print diff0
+	print "\n"
 
 	return diff1, diff0
 
 
-testing = 25
+testing = 10
 
 avgs = []
 
-for i in range(1000000):
-	tester = []
-	for i in range(testing):
-		rand = random.random()
-		add = 0
-		if (rand < .3):
-			add = 1
-		tester.append(add)
-	dcg1, dcg0 = get_dcg(tester)
+tester = [1,0,0,1,0,0,0,0,0,0]
+# for i in range(testing):
+# 	rand = random.random()
+# 	add = 0
+# 	if (rand < .3):
+# 		add = 1
+# 	tester.append(add)
+dcg1, dcg0 = get_dcg(tester)
 
-	dcg1pos = math.fabs(dcg1)
-	dcg0pos = math.fabs(dcg0)
+dcg1pos = math.fabs(dcg1)
+dcg0pos = math.fabs(dcg0)
 
 #	perc_change = (dcg1pos - dcg0pos)/((dcg0pos+dcg1pos)/2.0)
-	avg = (dcg1 + dcg0)/2.0
-	avgs.append(avg)
+avg = (dcg1 + dcg0)/2.0
+print "avg "+str(avg)
+avgs.append(avg)
 
-fig, ax = plt.subplots(1)
-bin_boundaries = np.linspace(-1,1,150)
+# fig, ax = plt.subplots(1)
+# bin_boundaries = np.linspace(-1,1,150)
 
-weights = np.ones_like(avgs)/float(len(avgs))
-n, bins, rectangles = plt.hist(avgs, weights=weights, bins=bin_boundaries)
-# print n
-print bins
-print rectangles[1]
-print rectangles[2]
-plt.axis([-.5, .5, 0, .4])  
-plt.title("PDF of the Normalized Average DCG of 0 and 1\n history length = 20\t number of trials = 10^6")
-plt.xlabel("Binned Average DCG")
-plt.ylabel("Probability of Occurance")
+# weights = np.ones_like(avgs)/float(len(avgs))
+# n, bins, rectangles = plt.hist(avgs, weights=weights, bins=bin_boundaries)
+# # print n
 
-sigma = np.std(avgs)
-mu = np.mean(avgs)
-textstr = "mean = "+str(round(mu,4)) + "\n" +"stddev = "+str(round(sigma,4))
-#plt.text(.78,.87, textstr, fontsize=12, transform=ax.transAxes)
-print sigma
-print mu
+# plt.axis([-.5, .5, 0, .4])  
+# plt.title("PDF of the Normalized Average DCG of 0 and 1\n history length = 20\t number of trials = 10^6")
+# plt.xlabel("Binned Average DCG")
+# plt.ylabel("Probability of Occurance")
+
+# sigma = np.std(avgs)
+# mu = np.mean(avgs)
+# textstr = "mean = "+str(round(mu,4)) + "\n" +"stddev = "+str(round(sigma,4))
+# #plt.text(.78,.87, textstr, fontsize=12, transform=ax.transAxes)
+# print "testing: " + str(testing)
+# print sigma
+# print mu
 
 # x = np.linspace(-1,1,150)
 # print x

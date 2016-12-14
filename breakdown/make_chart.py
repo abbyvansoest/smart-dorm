@@ -104,6 +104,7 @@ if floors:
 			day_list = []
 
 			fname = day+"_"+floor+".txt"
+			print fname
 			fo = open(mydir+fname, "rw+")
 
 			for line in fo:
@@ -127,50 +128,86 @@ elif not floors:
 if floors:
 	add_lists = sum_day_lists(lists)
 	lists = add_lists
+	print lists
+
+lists = [sum(e)/len(e) for e in zip(*lists)]
 
 # Add each day's frequency data to the chart
-offset = 0
-index = 0
-legend_rects = []
-for l in lists:
+# offset = 0
+# index = 0
+# legend_rects = []
+# for l in lists:
 
-	#print data
-	print index
-	print '\n'+days[index] 
-	for x in l:
-		print str(x)
+# 	#print data
+# 	print index
+# 	print '\n'+days[index] 
 
-	if (days[index] == 'monday'):
-		col = 'm'
-	if (days[index] == 'tuesday'):
-		col = 'b'
-	if (days[index] == 'weds'):
-		col = 'y'
-	if (days[index] == 'thurs'):
-		col = 'g'
-	if (days[index] == 'friday'):
-		col = 'c'
-	if (days[index] == 'saturday'):
-		col = 'r'
-	if (days[index] == 'sunday'):
-		col = 'k'
-	rects = ax.bar(ind+margin+offset, l, width, color=col)
-	legend_rects.append(rects[0])
-	offset = offset + width
-	index = index + 1
+# 	if (days[index] == 'monday'):
+# 		col = 'm'
+# 	if (days[index] == 'tuesday'):
+# 		col = 'b'
+# 	if (days[index] == 'weds'):
+# 		col = 'y'
+# 	if (days[index] == 'thurs'):
+# 		col = 'g'
+# 	if (days[index] == 'friday'):
+# 		col = 'c'
+# 	if (days[index] == 'saturday'):
+# 		col = 'r'
+# 	if (days[index] == 'sunday'):
+# 		col = 'k'
+# 	rects = ax.bar(ind+margin+offset, l, width, color=col)
+# 	legend_rects.append(rects[0])
+# 	offset = offset + width
+# 	index = index + 1
 
 #ax.legend(legend_rects, days)
 
-ax.set_ylabel('Activation Frequency')
-ax.set_xlabel('Hour of the Day (0 is midnight)')
-if not floors:
-	ax.set_title(floor.capitalize() + " Floor Hour-By-Hour")
-if floors:
-	ax.set_title("All Floor Hour-By-Hour")
-ax.set_xticks(ind+width)
-ax.set_xticklabels(["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23"], horizontalalignment='center')
+# ax.set_ylabel('Activation Frequency')
+# ax.set_xlabel('Hour of the Day (0 is midnight)')
+# if not floors:
+# 	ax.set_title(floor.capitalize() + " Floor Hour-By-Hour")
+# if floors:
+# 	ax.set_title("All Floor Hour-By-Hour")
+# ax.set_xticks(ind+width)
+# ax.set_xticklabels(["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23"], horizontalalignment='center')
 
-dest_file = dest_dir + "sun_tues_all_freq.png"
-plt.savefig(dest_file)
-plt.show()
+# dest_file = dest_dir + "sun_tues_all_freq.png"
+# plt.savefig(dest_file)
+# plt.show()
+
+import plotly.plotly as py
+import plotly.graph_objs as go
+
+py.sign_in('asoest', 'SGqWW58Ux3KD9Qa60z8O')
+
+index = np.arange(len(lists))
+trace = go.Bar(
+    x= index,
+    y=lists,
+    name='active'
+)
+
+data = [trace]
+layout = go.Layout(
+	title='Average Occupancy Events by Hour',
+	barmode='group',
+	xaxis=dict(
+        title='Hour of the Day \n (0 is midnight)',
+        titlefont=dict(
+            size=16,
+            color='#7f7f7f'
+        )
+    ),
+    yaxis=dict(
+        title='Number of Activations',
+        titlefont=dict(
+            size=16,
+            color='#7f7f7f'
+        )
+    )
+)
+
+fig = go.Figure(data=data, layout=layout)
+py.plot(fig, filename='hourly_active')
 

@@ -71,18 +71,19 @@ ymax = 1          # optional y-value to set
 count = [0 for i in range(threshold)]
 
 # get all files for given time period
-day = 'sunday'
-day_caps = day.capitalize()
-mypath = 'Animate/pre_data/'+day
-dest_dir = 'breakdown/deadtime/'+day+'/'
-path1 = mypath+'/first/*.txt'
-path2 = mypath+'/second/*.txt'
-path3 = mypath+'/third/*.txt'
-files1 = glob.glob(path1)
-files2 = glob.glob(path2)
-files3 = glob.glob(path3)
+week = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+for day in week:
+	day_caps = day.capitalize()
+	mypath = 'Animate/pre_data/'+day
+	path1 = mypath+'/first/*.txt'
+	path2 = mypath+'/second/*.txt'
+	path3 = mypath+'/third/*.txt'
+	files1 = glob.glob(path1)
+	files2 = glob.glob(path2)
+	files3 = glob.glob(path3)
 
-files = files1+files2+files3
+	dest_dir = 'breakdown/deadtime/'+day+'/'
+	files = files1+files2+files3
 # statistics trackers
 cumulative = [0] * threshold
 num_tot_events = 0
@@ -144,22 +145,23 @@ for f in files:
 
 	# plot and save individual sensor histogram for time period
 	if (num_on_events == 0):
-		fdata = open(dest_dir+day+"_"+this_name+"_data"+'.txt', 'w')
-		fdata.write(str(num_on_events)+'\n')
-		fdata.close()
+		this = 0
+		# fdata = open(dest_dir+day+"_"+this_name+"_data"+'.txt', 'w')
+		# fdata.write(str(num_on_events)+'\n')
+		# fdata.close()
 	else:
 		n, bins, patches = plt.hist(mins_between, bins=range(0, threshold,1), normed=True)
-		save_name = dest_dir + day + "_" + this_name + '.png'
-		plt.title(this_name + ' Sensor, Dead Time Frequency ('+day_caps+')')
-		plt.xlabel('Time Since Last Activation')
-		plt.ylabel('Frequency')
-		plt.xlim(0., xmax)
-		plt.savefig(save_name)
-		fdata = open(dest_dir+day+"_"+this_name+"_data"+'.txt', 'w')
-		fdata.write(str(num_on_events)+'\n')
-		for x in n:
-			fdata.write(str(x)+'\n')
-		fdata.close()	
+		# save_name = dest_dir + day + "_" + this_name + '.png'
+		# plt.title(this_name + ' Sensor, Dead Time Frequency ('+day_caps+')')
+		# plt.xlabel('Time Since Last Activation')
+		# plt.ylabel('Frequency')
+		# plt.xlim(0., xmax)
+		# plt.savefig(save_name)
+		# fdata = open(dest_dir+day+"_"+this_name+"_data"+'.txt', 'w')
+		# fdata.write(str(num_on_events)+'\n')
+		# for x in n:
+		# 	fdata.write(str(x)+'\n')
+		# fdata.close()	
 
 	# track cumulative counts over all sensors
 	cumulative = map(add, cumulative, num)

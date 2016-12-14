@@ -73,40 +73,115 @@ def get_dcg(sequence):
 # how many std deviations from the mean is this value
 # how many std deviations from the mean is this value
 def stddev(average, history_length):
+	if (history_length == 1):
+		sd = 0.0
+		mean = 0.0
+	if (history_length == 2):
+		sd = 0.0
+		mean  = 0.0
+	if (history_length == 3):
+		sd = 0.0809938255361
+		mean = 1.5e-05
+	if (history_length == 4):
+		sd = 0.0961955026187
+		mean = -0.000136777385827
 	if (history_length == 5):
-		sd = .0993
-		mean = .0000759 
+		sd = 0.0991314934364
+		mean = -5.16671883027e-05
+	if (history_length == 6):
+		sd = 0.0975201816914
+		mean = -0.000251712503554
+	if (history_length == 7):
+		sd = 0.0935313474135
+		mean = 1.67752463058e-06
+	if (history_length == 8):
+		sd = 0.0884527721142
+		mean = 0.000254107357486
+	if (history_length == 9):
+		sd = 0.0830783710554
+		mean = -9.23926211925e-06
 	if (history_length == 10):
-		sd = .0775
-		mean = .0001
+		sd = 0.0775383249301
+		mean = -0.000118885387975
+	if (history_length == 11):
+		sd = 0.0721888314741
+		mean = 3.78533062958e-05
+	if (history_length == 12):
+		sd = 0.0669610977087
+		mean = -8.30047433629e-05
+	if (history_length == 13):
+		sd = 0.0625656384325
+		mean = -1.57826377231e-05
+	if (history_length == 14):
+		sd = 0.0582614782236
+		mean = 5.38984955053e-05
 	if (history_length == 15):
-		sd = 0.0657412560821
-		mean = 5.19945496431e-05
-		# or:
-		# sd = 0.054582911188
-		# mean = -2.02697717924e-05
+		sd = 0.0544770223494
+		mean = -2.05930337567e-05
+	if (history_length == 16):
+		sd = 0.0512090908314
+		mean = 4.12208443227e-06
+	if (history_length == 17):
+		sd = 0.0479263341674
+		mean = -4.78127371033e-05
+	if (history_length == 18):
+		sd = 0.0450099524507
+		mean = -1.02161159482e-05
+	if (history_length == 19):
+		sd = 0.0425118870589
+		mean = 5.05817768514e-08
 	if (history_length == 20):
-		sd = 0.0401660169834
-		mean = -1.35369388876e-05
+		sd = 0.0400840002389
+		mean = -6.36434390678e-06
+	if (history_length == 21):
+		sd = 0.0380649559586
+		mean = 4.3819497073e-06
+	if (history_length == 22):
+		sd = 0.0362082708024
+		mean = 1.84184993387e-05
+	if (history_length == 23):
+		sd = 0.034468368055
+		mean = 1.86137334364e-05
+	if (history_length == 24):
+		sd = 0.0328433535662
+		mean = -1.8989803463e-05
 	if (history_length == 25):
-		sd = 0.0313746923101
-		mean = 9.12079000843e-06
+		sd = 0.031436587224
+		mean = -1.22836515379e-07
+	if (history_length == 26):
+		sd = 0.0301499822855
+		mean = 2.67411130777e-05
+	if (history_length == 27):
+		sd = 0.0289383947815
+		mean = 2.28163005556e-06
+	if (history_length == 28):
+		sd = 0.0278922168051
+		mean = 7.28719138835e-06
+	if (history_length == 29):
+		sd = 0.0268419016853
+		mean = 3.15668748045e-05
 	if (history_length == 30):
-		sd = .02259
-		mean = 0
+		sd = 0.0259132856735
+		mean = 4.34097434428e-05
 	return (average - mean)/sd
 
 def get_freq_thresholds(history_length):
-	
-	if (history_length == 5):
+
+	if (history_length == 5 or history_length == 6 or history_length == 4 or history_length == 3):
 		return 0, .4, .8
-	if (history_length == 10):
+	if (history_length == 7 or history_length == 8):
+		return 0, .25, .75
+	if (history_length == 10 or history_length == 11 or history_length == 9):
 		return .1, .34, .67
-	if (history_length == 15):
-		return 0.07, 0.27, 0.47
-	if (history_length == 20):
+	if (history_length == 14 or history_length == 13 or history_length == 12):
+		return .15, .36, .65
+	if (history_length == 15 or history_length == 16 or history_length == 17):
+		return 0.07, 0.27, 0.48
+	if (history_length == 20 or history_length == 21 or history_length == 22 or history_length == 19 or history_length == 18):
 		return .1, .34, .67
-	if (history_length == 30):
+	if (history_length == 25 or history_length == 26 or history_length == 24 or history_length == 23):
+		return .12, .36, .625
+	if (history_length == 30 or history_length == 29 or history_length == 28 or history_length == 27):
 		return .134, .3, .634
 	
 def classify(history, hour):
@@ -477,42 +552,74 @@ def runExperiment(datafile, history_length):
 			else:
 				track[i].append(int(entry_array[i]))
 
-			all_policy_actions.write(t + "\t" + str(entry_array[i]) + "\t" + str(timeInPolicy[i]) + "\t" + str(length_of_policy[i]) + "\t" + fc_str + ", "+t_str + "\n")
-
 		timer = timer + 1
 		entry = datastream.readline()
 
 
 	energy, total_active = calculate_energy(active_minutes)
 
-	return total_active, num_wasted_mins, num_mid_renew, total_events
+	return total_active, num_wasted_mins, total_events, num_mid_renew
 
 
 ### generate all data files ###
 
 span = 30
-filename = "experiment_data/third_week.txt"
 
+filename = "experiment_data/first_week.txt"
+outfile = "dcg/first_span.txt"
+f_out = open(outfile, "w")
 # for all history lengths up to an including span
-for i in range(1, span+1)
-	active, wasted, renewed, events = runExperiment(filename, i)
+for i in range(3,span+1):
+	active, wasted, events, renewed = runExperiment(filename, i)
 	print active
 	print wasted
-	print renewed
 	print events
-	quit()
+	print renewed
+	f_out.write(str(i)+ ": \n")
+	f_out.write(str(active)+"\n")
+	f_out.write(str(wasted)+"\n")
+	f_out.write(str(events)+"\n")
+	f_out.write(str(renewed)+"\n")
+
+f_out.close()
 
 
+filename = "experiment_data/second_week.txt"
+outfile = "dcg/second_span.txt"
+f_out = open(outfile, "w")
+# for all history lengths up to an including span
+for i in range(3,span+1):
+	active, wasted, events, renewed = runExperiment(filename, i)
+	print active
+	print wasted
+	print events
+	print renewed
+	f_out.write(str(i)+ ": \n")
+	f_out.write(str(active)+"\n")
+	f_out.write(str(wasted)+"\n")
+	f_out.write(str(events)+"\n")
+	f_out.write(str(renewed)+"\n")
+f_out.close()
 
 
+filename = "experiment_data/third_week.txt"
+outfile = "dcg/third_span.txt"
+f_out = open(outfile, "w")
+# for all history lengths up to an including span
+for i in range(3,span+1):
+	active, wasted, events, renewed = runExperiment(filename, i)
+	print active
+	print wasted
+	print events
+	print renewed
+	f_out.write(str(i)+ ": \n")
+	f_out.write(str(active)+"\n")
+	f_out.write(str(wasted)+"\n")
+	f_out.write(str(events)+"\n")
+	f_out.write(str(renewed)+"\n")
 
-
-
-
-
-
-
-
+f_out.close()
+	
 
 
 
